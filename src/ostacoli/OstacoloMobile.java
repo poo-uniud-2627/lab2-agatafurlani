@@ -1,4 +1,5 @@
 // Pong — Programmazione Orientata agli Oggetti e Laboratori, Udine, a.a. 2026-27
+
 // Consegna 4: gli ostacoli. Scadenza: domenica 15 novembre 2026.
 package ostacoli;
 
@@ -17,6 +18,10 @@ public class OstacoloMobile implements Ostacolo {
     public static final Color COLORE = new Color(80, 200, 120);
 
     private Rettangolo area;   // non è final: l'ostacolo si muove
+    private final double velocita;
+    private final double limiteAlto;
+    private final double limiteBasso;
+    private double direzione;
     // scrivete qui gli altri campi che vi servono
 
     /**
@@ -25,8 +30,14 @@ public class OstacoloMobile implements Ostacolo {
      * Promette: un ostacolo che sta in area e che, al primo avanza, comincia a scendere.
      */
     public OstacoloMobile(Rettangolo area, double velocita, double limiteAlto, double limiteBasso) {
+        if (area == null || velocita <= 0 || limiteAlto > area.y() || area.y() + area.altezza() > limiteBasso) {
+            throw new IllegalArgumentException();
+        }
         this.area = area;
-        // scrivete qui
+        this.velocita = velocita;
+        this.limiteAlto = limiteAlto;
+        this.limiteBasso = limiteBasso;
+        this.direzione = 1;
     }
 
     @Override
@@ -46,7 +57,7 @@ public class OstacoloMobile implements Ostacolo {
     /** Promette: COLORE. */
     @Override
     public Color getColore() {
-        return null; // scrivete qui
+        return COLORE; // scrivete qui
     }
 
     /**
@@ -59,5 +70,21 @@ public class OstacoloMobile implements Ostacolo {
     @Override
     public void avanza() {
         // scrivete qui
+        double nuovaY = area.y() + direzione * velocita;
+        if (direzione == 1) {
+            if (nuovaY + area.altezza() >= limiteBasso) {
+                area = new Rettangolo(area.x(), limiteBasso - area.altezza(), area.larghezza(), area.altezza());
+                direzione = -1;
+            } else {
+                area = new Rettangolo(area.x(), nuovaY, area.larghezza(), area.altezza());
+            }
+        } else {
+            if (nuovaY <= limiteAlto) {
+                area = new Rettangolo(area.x(), limiteAlto, area.larghezza(), area.altezza());
+                direzione = 1;
+            } else {
+                area = new Rettangolo(area.x(), nuovaY, area.larghezza(), area.altezza());
+            }
+        }
     }
 }
