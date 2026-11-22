@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import ostacoli.MotoreDeiLivelli;
 import ostacoli.Ostacolo;
+import nebbia.Nebbia;
 
 /**
  * Mostra la partita: sessanta volte al secondo la fa avanzare di un passo e la ridisegna.
@@ -81,6 +82,12 @@ class Schermo extends JPanel {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, larghezza, altezza);
 
+        Nebbia nebbia = partita.getLivello().nebbia();
+        if (nebbia.isPresente()) {
+            g2.setColor(Color.GRAY);
+            riempi(g2, nebbia.getZona());
+        }
+
         g2.setColor(Color.DARK_GRAY);
         g2.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{10, 10}, 0));
         g2.drawLine(larghezza / 2, 0, larghezza / 2, altezza);
@@ -99,7 +106,9 @@ class Schermo extends JPanel {
         Palla palla = partita.getPalla();
         int r = palla.getRaggio();
         Posizione p = palla.getPosizione();
-        g2.fillOval((int) Math.round(p.x() - r), (int) Math.round(p.y() - r), 2 * r, 2 * r);
+        if (!nebbia.nasconde(p)) {
+            g2.fillOval((int) Math.round(p.x() - r), (int) Math.round(p.y() - r), 2 * r, 2 * r);
+        }
 
         g2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 48));
         g2.drawString(String.valueOf(partita.getPunti(Lato.SINISTRA)), larghezza / 2 - 80, 60);

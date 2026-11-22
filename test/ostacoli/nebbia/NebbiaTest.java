@@ -11,6 +11,7 @@ import geometria.Posizione;
 import geometria.Rettangolo;
 import ostacoli.MotoreDeiLivelli;
 import org.junit.jupiter.api.Test;
+import nebbia.Nebbia;
 
 class NebbiaTest {
 

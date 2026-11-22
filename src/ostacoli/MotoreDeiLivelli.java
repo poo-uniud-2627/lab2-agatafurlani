@@ -4,6 +4,7 @@ package ostacoli;
 import geometria.Rettangolo;
 import java.util.ArrayList;
 import java.util.List;
+import nebbia.Nebbia;
 
 /**
  * Il motore dei livelli: dato il numero del livello, decide quanto va veloce la palla, quanto sbaglia
@@ -19,6 +20,9 @@ public class MotoreDeiLivelli {
     /** La palla: 5 pixel per fotogramma al livello 1, mezzo pixel in più a ogni livello. */
     static final double VELOCITA_AL_LIVELLO_1 = 5;
     static final double VELOCITA_IN_PIU_A_OGNI_LIVELLO = 0.5;
+
+    static final double FRAZIONE_AL_LIVELLO_3 = 0.30;
+    static final double FRAZIONE_IN_PIU_A_OGNI_LIVELLO = 0.05;
 
     /**
      * Il giocatore automatico: sbaglia fino a 90 pixel al livello 1, 12 in meno a ogni livello.
@@ -39,7 +43,8 @@ public class MotoreDeiLivelli {
         }
         double velocita = VELOCITA_AL_LIVELLO_1 + VELOCITA_IN_PIU_A_OGNI_LIVELLO * (numero - 1);
         double errore = Math.max(0, ERRORE_AL_LIVELLO_1 - ERRORE_IN_MENO_A_OGNI_LIVELLO * (numero - 1));
-        return new Livello(numero, velocita, errore, new Ostacoli(ostacoli(numero, larghezzaCampo / 2.0, altezzaCampo / 2.0)));
+        Nebbia nebbia = nebbia(numero, larghezzaCampo, altezzaCampo);
+        return new Livello(numero, velocita, errore, new Ostacoli(ostacoli(numero, larghezzaCampo / 2.0, altezzaCampo / 2.0)), nebbia);
     }
 
     /**
@@ -84,6 +89,14 @@ public class MotoreDeiLivelli {
             ostacoli.add(new OstacoloEsplosivo(attorno(cx, cy, 160, -45, 20, 20)));
         }
         return ostacoli;
+    }
+
+    private static Nebbia nebbia(int numero, int larghezzaCampo, int altezzaCampo) {
+        if (numero < 3) {
+            return Nebbia.nessuna();
+        } else {
+            return Nebbia.alCentro(larghezzaCampo, altezzaCampo, FRAZIONE_AL_LIVELLO_3 + (numero - 3) * FRAZIONE_IN_PIU_A_OGNI_LIVELLO);
+        }
     }
 
     /** Il rettangolo largo larghezza e alto altezza, con il centro spostato di (dx, dy) dal centro (cx, cy) del campo. */
